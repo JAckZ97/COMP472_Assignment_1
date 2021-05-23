@@ -29,7 +29,6 @@ numColumn = 3
 # quarantineArea = input("Define quarantine place by cell number: ")
 # vaccineArea = input("Define vaccine spot by cell number: ")
 # playgroundArea = input("Define play ground by cell number: ")
-# undefinedArea = []
 quarantineArea = ['1' , '6']
 vaccineArea = ['2' , '4']
 playgroundArea = ['3']
@@ -66,11 +65,13 @@ for y in range(0,numRow):
         area_y.append(1.05+y*0.1)
 
 # Create each edge start and end point coordinate in list
+# Horizontal edges 
 for x in range(0,numRow+1):
     edge.append((1 , 1+(numColumn)*0.2))
     edge.append((1+x*0.1 , 1+x*0.1))
     edge.append('r')
 
+# Vertical edges
 for y in range(0,numColumn+1):
     edge.append((1+y*0.2 , 1+y*0.2))
     edge.append((1 , 1+(numRow)*0.1))
