@@ -20,7 +20,7 @@ Starting point in quarantine cell (include 4 nodes and 4 edges):
     print("No path is found, Please try again! ").
 
 Starting point in other areas except quarantine cell |and| ending point in quarantine cell:
-    1. go to top right cornor of starting point cell.
+    1. go to top right cornor of starting point cell. (Consider the closest one in terms of geometric distance, ref: https://moodle.concordia.ca/moodle/mod/forum/discuss.php?d=746188)
     2. find top right cornor of closest quarantine area.
     3. find the optimal path from starting point to ending point.
 
@@ -30,3 +30,10 @@ Starting / ending point both are in other areas except quarantine cell (include 
 ```
 
 #### Design of heuristic algorithm
+TODO: 
+- Defining h(n)
+    - How to compare current node with destination node by a number
+    - Calculate the f(n) by g(n) + h(n)
+    - Make sure use traverse back method
+- Classify the node and edge with areas
+- Find the range for starting node and ending node
