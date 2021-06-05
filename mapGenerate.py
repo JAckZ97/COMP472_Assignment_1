@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # -------------- map generating --------------
-class Map:
+class Map():
 
     def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3']):
         self.numRow = numRow

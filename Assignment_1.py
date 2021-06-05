@@ -28,6 +28,8 @@ quarantineArea = ['1' , '6']
 vaccineArea = ['2' , '4']
 playgroundArea = ['3']
 
-
+# -------------- map generating --------------
 x = Map(numRow, numColumn, quarantineArea, vaccineArea, playgroundArea)
 x.drawMap()
+# --------------------------------------------
+
