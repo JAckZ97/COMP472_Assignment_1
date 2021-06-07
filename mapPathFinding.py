@@ -31,6 +31,7 @@ class Node():
         self.hValue = 0
         self.fValue = 0
 
+
 class Edge():
     def __init__(self, leftNode: Node, rightNode: Node, leftArea: Area = None, rightArea: Area = None):
         # Each edge have 2 node on left and right side, and 1 or 2 Areas touched
@@ -38,6 +39,7 @@ class Edge():
         self.rightNode: Node = rightNode
         self.leftArea: Area = leftArea
         self.rightArea: Area = rightArea
+
 
 class Area():
     def __init__(self, areaType: str, coorX, coorY, topRightNode: Node = None, topLeftNode: Node = None, bottomRightNode: Node = None, bottomLeftNode: Node = None):
@@ -49,6 +51,7 @@ class Area():
         self.topLeftNode = topLeftNode
         self.bottomRightNode = bottomRightNode
         self.bottomLeftNode = bottomLeftNode
+
 
 class PathMap():
     def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3']):
@@ -92,10 +95,9 @@ class PathMap():
             self.map[y] = np.array(self.map[y])
         self.map = np.array(self.map)
 
-
         # Set self.nodes within the map
         count = 0
-        node_list = ['A', 'B', 'C', 'D', 'edge', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'node1', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+        node_list = ['A', 'B', 'C', 'D', 'edge', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
             'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ',
             'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ',
             'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ', 'CK', 'CL', 'CM', 'CN', 'CO', 'CP', 'CQ', 'CR', 'CS', 'CT', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ',
@@ -106,7 +108,6 @@ class PathMap():
             for x in range(0, self.numColumn+1):
                 self.nodes[y].append(Node(node_list[count], x, y))
                 count += 1
-
 
         # Set self.edgeList within the map
         area : Area
@@ -129,7 +130,6 @@ class PathMap():
             self.edgeList.append(Edge(self.nodes[x][self.numColumn], self.nodes[x+1][self.numColumn], self.map[x][self.numColumn-1], None))
         for y in range(self.numColumn):
             self.edgeList.append(Edge(self.nodes[self.numRow][y], self.nodes[self.numRow][y+1], self.map[self.numRow-1][y], None))
-
 
     def setNodeEdges(self, node1: Node):
         edge: Edge
@@ -173,7 +173,7 @@ class PathMap():
             else:
                 pass
         return neighborNodeList
-    
+
 
 class roleC_AStar():
     def __init__(self, map: PathMap, cost = {'Qt': 0, 'Vc': 2, 'PG': 3, 'UN': 1}):
@@ -204,8 +204,10 @@ class roleC_AStar():
             tempCost = 0.5 * (self.cost[area2.areaType] + self.cost[area1.areaType])
         elif area1 is None:
             tempCost = self.cost[area2.areaType]
-        else:
+        elif area2 is None:
             tempCost = self.cost[area1.areaType]
+        else:
+            tempCost = 0.0
         return tempCost
     
     # Get hValue from currentNode to endNode
@@ -233,25 +235,18 @@ class roleC_AStar():
             elif dy < 0:
                 cost += self.setEdgeCost(node1.upEdge)
             else:
-                pass
+                cost = 0.0
         elif dy == 0:
             if dx > 0:
                 cost += self.setEdgeCost(node1.rightEdge)
             elif dx < 0:
                 cost += self.setEdgeCost(node1.leftEdge)
             else: 
-                pass
+                cost = 0.0
         return cost
 
     def getCostSofar(self, currentNode: Node):
-        # pathList = []
         costSoFar = 0.0
-        # pathList = self.createPath(currentNode)
-        
-        # # Total gValues
-        # for x in range(len(pathList)-1):
-        #     costSoFar += self.getCost(pathList[x], pathList[x+1])
-        # return costSoFar
         current: Node = currentNode
         while current is not None:
             # print(current.nodeId)
@@ -262,13 +257,15 @@ class roleC_AStar():
                 current = current.parentNode
         return costSoFar
 
-    def createPath(self, currentNode: Node):
-        path = []
-        current: Node = currentNode
-        while current is not None:
-            path.append(currentNode)
-            current = current.parentNode
-        return path[::-1]  # Return reversed path
+    def createPath(self, currentNode: Node, startNode: Node):
+        self.optPath.insert(0, currentNode)
+        while currentNode != startNode:
+            currentNode = currentNode.parentNode
+            self.optPath.insert(0, currentNode)
+        x : Node
+        for x in self.optPath:
+            print(x.nodeId)
+        # return self.optPath
 
     def pathFind(self, startArea: Area, endArea: Area):
         # Define start, current, end node
@@ -281,69 +278,35 @@ class roleC_AStar():
         # Add start node into openlist
         self.listPush(currentNode, currentNode.fValue, self.openList)
 
-        # # Pop start node from openlist and push it into closelist
-        # self.listPop(self.openList)
-        # self.listPush(currentNode, currentNode.fValue, self.closeList)
-        
-        # # Push start node neighbors to openlist
-        # for x in self.map.findNeighbor(currentNode):
-        #     tempCurrent: Node = self.map.setNodeEdges(currentNode)
-        #     self.listPush(x, self.getCost(tempCurrent, x) + self.heuristic(x, endNode), self.openList)
-
         while len(self.openList) > 0:
-            # Pop the lowest fValue node
+            # Pop the lowest fValue node from open list
             currentNode = self.listPop(self.openList)
             tempCurrent: Node = self.map.setNodeEdges(currentNode)
-            # print(self.openList)
 
-
-            if tempCurrent == endNode:
+            # If current node is end node, break while loop and print path
+            if tempCurrent.nodeId == endNode.nodeId:
                 print("Path found. ")
-                print(self.createPath(tempCurrent))
+                self.createPath(tempCurrent, startNode)
                 break
+            
+            # Push the current node into close list
+            self.listPush(tempCurrent, tempCurrent.fValue, self.closeList)
 
-            else:  
-                self.listPush(tempCurrent, tempCurrent.fValue, self.closeList)
-                print(self.closeList[0][2].nodeId)
+            # Loop each neighbor node which connected with current node
+            for x in self.map.findNeighbor(tempCurrent):
+                tempX: Node = self.map.setNodeEdges(x)
 
-                # Loop each neighbor node which connected with current node
-                for x in self.map.findNeighbor(tempCurrent):
-                    print(x.nodeId)
-                    # print(x.coorX)
-                    # print(x.coorY)
-                    time.sleep(0.1)
-                    tempX: Node = self.map.setNodeEdges(x)
-
-                    # print(tempX.nodeId)
-                    # print(tempX.rightEdge)
-                    # print(tempX.leftEdge)
-                    # print(tempX.upEdge)
-                    # print(tempX.downEdge)
-                    # print(self.setEdgeCost(tempX.upEdge))
-
-                    # If new neighbor not is in the close list
-                    for closeListIndex in range(len(self.closeList)):
-                    # if tempX in self.closeList:
-                    #     continue
-                        print(1)
-                        if tempX == self.closeList[closeListIndex][2]:
-                            continue
-
-                    if tempX not in self.openList:
-                        # tentative_gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, x)
-                        tempX.parentNode = tempCurrent
-                        tempX.gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, tempX)
-
-                        # print(self.getCostSofar(tempCurrent))
-                        # print(self.getCost(tempCurrent, tempX))
-
-                        # tempX.gValue = self.getCost(tempCurrent, tempX)
-                        tempX.hValue = self.heuristic(tempX, endNode)
-                        tempX.fValue = tempX.gValue + tempX.hValue     
-                        self.listPush(tempX, tempX.fValue, self.openList)
-                        print(" ---- " + tempX.nodeId)
-                    
-        # self.optPath.append(self.createPath(x))
-        # print(self.optPath)
+                # If current node neighbor is in close list, ignore the neighbor
+                if any(tempX in sublist for sublist in self.closeList):
+                    continue
+                
+                # If current node neighbor is not in the open list, add it into open list
+                if tempX not in self.openList:
+                    # tentative_gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, x)
+                    tempX.parentNode = tempCurrent
+                    tempX.gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, tempX)
+                    tempX.hValue = self.heuristic(tempX, endNode)
+                    tempX.fValue = tempX.gValue + tempX.hValue     
+                    self.listPush(tempX, tempX.fValue, self.openList)
 
 

@@ -1,5 +1,13 @@
 # COMP472_Assignment_1
 
+### Running requirement 
+```
+pip install numpy
+pip install matplotlib
+
+python Assignment1.py   # To start the program
+```
+
 ### Task:
 - Create a heuristic search algorithm to find the optimal paths between any located point on the map.
 
@@ -26,11 +34,10 @@ Starting point in other areas except quarantine cell |and| ending point in quara
 
 Starting / ending point both are in other areas except quarantine cell (include 4 nodes and 4 edges):
     print("Ending point is not in quarantine grid, which is not designed for Role C. ")
-
 ```
 
 #### Design of heuristic algorithm
-TODO: 
+~~TODO:~~ 
 - Defining h(n)
     - How to compare current node with destination node by a number
     - Calculate the f(n) by g(n) + h(n)
