@@ -30,8 +30,6 @@ class Map():
         # Vc as vaccine 
         # PG as play ground
         area_list = ['Qt', 'Vc', 'PG']
-        # # For Role C only
-        # area_cost = {'Qt': 0, 'Vc': 2, 'PG': 3, 'Ud': 1}
 
         # Create node coordinate in list
         for y in range(0,self.numRow+1):
