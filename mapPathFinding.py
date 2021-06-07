@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import heapq
+import time
 
 class Node():
     pass
@@ -24,7 +25,7 @@ class Node():
         self.leftEdge: Edge = None
         self.upEdge: Edge = None
         # Previous node, used when final path finding
-        self.lastNode: Node = None
+        self.parentNode: Node = None
 
         self.gValue = 0
         self.hValue = 0
@@ -133,23 +134,24 @@ class PathMap():
     def setNodeEdges(self, node1: Node):
         edge: Edge
         node2: Node
-        for nodeList in self.nodes:
-            for node1 in nodeList:
-                for edge in self.edgeList:
-                    if node1 == edge.leftNode or node1 == edge.rightNode:
-                        node1.edges.append(edge)
-                        if node1 == edge.leftNode:
-                            node2 = edge.rightNode
-                        elif node1 == edge.rightNode:
-                            node2 = edge.leftNode
-                        if node2.coorX-node1.coorX == 1:
-                            node1.rightEdge = edge
-                        elif node2.coorX-node1.coorX == -1:
-                            node1.leftEdge = edge
-                        elif node2.coorY-node1.coorY == 1:
-                            node1.downEdge = edge
-                        elif node2.coorY-node1.coorY == -1:
-                            node1.upEdge = edge
+        # for nodeList in self.nodes:
+        #     for node1 in nodeList:
+        for edge in self.edgeList:
+            if node1 == edge.leftNode or node1 == edge.rightNode:
+                node1.edges.append(edge)
+                if node1 == edge.leftNode:
+                    node2 = edge.rightNode
+                elif node1 == edge.rightNode:
+                    node2 = edge.leftNode
+                if node2.coorX-node1.coorX == 1:
+                    node1.rightEdge = edge
+                elif node2.coorX-node1.coorX == -1:
+                    node1.leftEdge = edge
+                elif node2.coorY-node1.coorY == 1:
+                    node1.downEdge = edge
+                elif node2.coorY-node1.coorY == -1:
+                    node1.upEdge = edge
+        # node = node1
         return node1
 
     # Assign nodes location (node right, left, up, down edge connection) based on self.edgeList
@@ -227,33 +229,45 @@ class roleC_AStar():
 
         if dx == 0:
             if dy > 0:
-                cost = self.setEdgeCost(node1.rightEdge)
+                cost += self.setEdgeCost(node1.downEdge)
             elif dy < 0:
-                cost = self.setEdgeCost(node1.leftEdge)
+                cost += self.setEdgeCost(node1.upEdge)
+            else:
+                pass
         elif dy == 0:
             if dx > 0:
-                cost = self.setEdgeCost(node1.downEdge)
+                cost += self.setEdgeCost(node1.rightEdge)
             elif dx < 0:
-                cost = self.setEdgeCost(node1.upEdge)
+                cost += self.setEdgeCost(node1.leftEdge)
+            else: 
+                pass
         return cost
 
     def getCostSofar(self, currentNode: Node):
-        pathList = []
+        # pathList = []
         costSoFar = 0.0
-        pathList = self.createPath(currentNode)
+        # pathList = self.createPath(currentNode)
         
-        # Total gValues
-        for x in range(len(pathList)-1):
-            costSoFar += self.getCost(pathList[x], pathList[x+1])
+        # # Total gValues
+        # for x in range(len(pathList)-1):
+        #     costSoFar += self.getCost(pathList[x], pathList[x+1])
+        # return costSoFar
+        current: Node = currentNode
+        while current is not None:
+            # print(current.nodeId)
+            if current.parentNode is None:
+                break
+            else:
+                costSoFar += self.getCost(current, current.parentNode)
+                current = current.parentNode
         return costSoFar
 
     def createPath(self, currentNode: Node):
         path = []
         current: Node = currentNode
         while current is not None:
-            path.append(currentNode.nodeId)
-            current = current.lastNode
-        # print(path[::-1])
+            path.append(currentNode)
+            current = current.parentNode
         return path[::-1]  # Return reversed path
 
     def pathFind(self, startArea: Area, endArea: Area):
@@ -267,49 +281,69 @@ class roleC_AStar():
         # Add start node into openlist
         self.listPush(currentNode, currentNode.fValue, self.openList)
 
-        # Pop start node from openlist and push it into closelist
-        self.listPop(self.openList)
-        self.listPush(currentNode, currentNode.fValue, self.closeList)
+        # # Pop start node from openlist and push it into closelist
+        # self.listPop(self.openList)
+        # self.listPush(currentNode, currentNode.fValue, self.closeList)
         
-
-        # Push start node neighbors to openlist
-        for x in self.map.findNeighbor(currentNode):
-            temp: Node = self.map.setNodeEdges(currentNode)
-            self.listPush(x, self.getCost(temp, x) + self.heuristic(x, endNode), self.openList)
+        # # Push start node neighbors to openlist
+        # for x in self.map.findNeighbor(currentNode):
+        #     tempCurrent: Node = self.map.setNodeEdges(currentNode)
+        #     self.listPush(x, self.getCost(tempCurrent, x) + self.heuristic(x, endNode), self.openList)
 
         while len(self.openList) > 0:
             # Pop the lowest fValue node
             currentNode = self.listPop(self.openList)
-            temp: Node = self.map.setNodeEdges(currentNode)
+            tempCurrent: Node = self.map.setNodeEdges(currentNode)
+            # print(self.openList)
 
-            if temp == endNode:
+
+            if tempCurrent == endNode:
                 print("Path found. ")
-                self.createPath(temp)
+                print(self.createPath(tempCurrent))
                 break
-            
-            # Loop each nodes which connected with current node
-            for x in self.map.findNeighbor(temp):
 
-                # If new neighbor is not in the close list
-                if x in self.closeList:
-                    continue
-                
-                # tentative_gValue = self.getCostSofar(currentNode) + self.getCost(currentNode, x) + self.heuristic(x, endNode)
-                tentative_gValue = self.getCostSofar(temp) + self.getCost(temp, x)
-                # tentative_gValue = self.getCost(currentNode, x)
-                
-                if tentative_gValue < x.gValue:
-                    x.lastNode = temp
-                    x.gValue = tentative_gValue
-                    x.fValue = tentative_gValue + self.heuristic(x, endNode)
+            else:  
+                self.listPush(tempCurrent, tempCurrent.fValue, self.closeList)
+                print(self.closeList[0][2].nodeId)
 
-                    if x not in self.closeList:
-                        self.listPush(x, x.fValue, self.closeList)
-                        for y in self.map.findNeighbor(x):
+                # Loop each neighbor node which connected with current node
+                for x in self.map.findNeighbor(tempCurrent):
+                    print(x.nodeId)
+                    # print(x.coorX)
+                    # print(x.coorY)
+                    time.sleep(0.1)
+                    tempX: Node = self.map.setNodeEdges(x)
 
-                            self.listPush(x, self.getCost(temp, x) + self.heuristic(x, endNode), self.openList)
-            
-            self.optPath.append(self.createPath(x))
-        print(self.optPath)
+                    # print(tempX.nodeId)
+                    # print(tempX.rightEdge)
+                    # print(tempX.leftEdge)
+                    # print(tempX.upEdge)
+                    # print(tempX.downEdge)
+                    # print(self.setEdgeCost(tempX.upEdge))
+
+                    # If new neighbor not is in the close list
+                    for closeListIndex in range(len(self.closeList)):
+                    # if tempX in self.closeList:
+                    #     continue
+                        print(1)
+                        if tempX == self.closeList[closeListIndex][2]:
+                            continue
+
+                    if tempX not in self.openList:
+                        # tentative_gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, x)
+                        tempX.parentNode = tempCurrent
+                        tempX.gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, tempX)
+
+                        # print(self.getCostSofar(tempCurrent))
+                        # print(self.getCost(tempCurrent, tempX))
+
+                        # tempX.gValue = self.getCost(tempCurrent, tempX)
+                        tempX.hValue = self.heuristic(tempX, endNode)
+                        tempX.fValue = tempX.gValue + tempX.hValue     
+                        self.listPush(tempX, tempX.fValue, self.openList)
+                        print(" ---- " + tempX.nodeId)
+                    
+        # self.optPath.append(self.createPath(x))
+        # print(self.optPath)
 
 
