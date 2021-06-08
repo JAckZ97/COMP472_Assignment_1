@@ -18,7 +18,7 @@ python Assignment1.py   # To start the program
 - Role C head to the quarantine place only.
 - Role C only allow to move on the edges of the cell.
 - Role C are not allowed to move on the edge between two play ground.
-- Role C starting point can be anywhere on the map, but if it's not top right corner of cell, it will beconsider as top right.
+- Role C starting point can be anywhere on the map, but if it's not top right corner of cell, it will be considered as top right.
 - Role C ending point will be the closed quarantine cell top right corner
 
 #### Program cases:

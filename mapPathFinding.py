@@ -287,6 +287,7 @@ class roleC_AStar():
             if tempCurrent.nodeId == endNode.nodeId:
                 print("Path found. ")
                 self.createPath(tempCurrent, startNode)
+                print(self.getCostSofar(endNode))
                 break
             
             # Push the current node into close list
