@@ -4,12 +4,14 @@ import matplotlib.pyplot as plt
 # -------------- map generating --------------
 class Map():
 
-    def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3']):
+    def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3'], startNodeSplit = ['1.55', '1.175'], endNodeSplit = ['1.1', '1.175']):
         self.numRow = numRow
         self.numColumn = numColumn
         self.quarantineArea = quarantineArea
         self.vaccineArea = vaccineArea
         self.playgroundArea = playgroundArea
+        self.startNodeSplit = startNodeSplit
+        self.endNodeSplit = endNodeSplit
 
 
     def drawMap(self):
@@ -30,8 +32,6 @@ class Map():
         # Vc as vaccine 
         # PG as play ground
         area_list = ['Qt', 'Vc', 'PG']
-        # # For Role C only
-        # area_cost = {'Qt': 0, 'Vc': 2, 'PG': 3, 'Ud': 1}
 
         # Create node coordinate in list
         for y in range(0,self.numRow+1):
@@ -63,6 +63,10 @@ class Map():
         plt.plot(*edge)
         plt.scatter(node_x, node_y, marker='o')
         plt.scatter(area_x, area_y, marker='o')
+        plt.plot(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'ro')
+        plt.text(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'Start node', fontsize=14)
+        plt.plot(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'ro')
+        plt.text(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'End node', fontsize=14)
 
         # Label the name for each nodes of the map
         count = 0
