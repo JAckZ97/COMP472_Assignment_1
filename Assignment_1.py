@@ -95,7 +95,7 @@ def main():
         qtAreaList : list(Area) = list()
         # Record every cost from start node to quarantine area top right node cost in temp variable
         # If new path cost is lower than the current, replace it
-        tempCost = 0.0
+        tempCost : float= 200.0
         count = 1
         for y in range(0, numColumn):
             for x in range(0, numRow):
@@ -105,10 +105,12 @@ def main():
         
         # for qtArea in qtAreaList:
         #     print("Path %s: " %count)
-        #     roleC.pathFind(startArea, qtArea)
+        #     if tempCost > roleC.pathFind(startArea, qtArea):
+        #         tempCost = roleC.pathFind(startArea, qtArea)
         #     count += 1
-        #     time.sleep(5)
+        #     time.sleep(1)
+        # print(tempCost)
         roleC.pathFind(startArea, qtAreaList[0])
-
+        # roleC.pathFind(startArea, qtAreaList[1])
 
 main()

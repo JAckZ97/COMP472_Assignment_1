@@ -111,19 +111,19 @@ class PathMap():
 
         # Set self.edgeList within the map
         area : Area
-        for x in range(0, self.numRow):
-            for y in range(0, self.numColumn):
+        for x in range(self.numRow):
+            for y in range(self.numColumn):
                 area = self.map[x][y]
                 area.topLeftNode = self.nodes[x][y]
                 area.topRightNode = self.nodes[x][y+1]
                 area.bottomLeftNode = self.nodes[x+1][y]
                 area.bottomRightNode = self.nodes[x+1][y+1]
 
-                if x == 0:
+                if y == 0:
                     self.edgeList.append(Edge(self.nodes[x][y], self.nodes[x+1][y], None, self.map[x][y]))
                 else:
                     self.edgeList.append(Edge(self.nodes[x][y], self.nodes[x+1][y], self.map[x][y-1], self.map[x][y]))
-                if y == 0:
+                if x == 0:
                     self.edgeList.append(Edge(self.nodes[x][y], self.nodes[x][y+1], None, self.map[x][y]))
                 else:
                     self.edgeList.append(Edge(self.nodes[x][y], self.nodes[x][y+1], self.map[x-1][y], self.map[x][y]))
@@ -231,16 +231,16 @@ class roleC_AStar():
 
         if dx == 0:
             if dy > 0:
-                cost += self.setEdgeCost(node1.downEdge)
+                cost = self.setEdgeCost(node1.downEdge)
             elif dy < 0:
-                cost += self.setEdgeCost(node1.upEdge)
+                cost = self.setEdgeCost(node1.upEdge)
             else:
                 cost = 0.0
         elif dy == 0:
             if dx > 0:
-                cost += self.setEdgeCost(node1.rightEdge)
+                cost = self.setEdgeCost(node1.rightEdge)
             elif dx < 0:
-                cost += self.setEdgeCost(node1.leftEdge)
+                cost = self.setEdgeCost(node1.leftEdge)
             else: 
                 cost = 0.0
         return cost
@@ -277,16 +277,17 @@ class roleC_AStar():
         self.listPush(currentNode, currentNode.fValue, self.openList)
 
         while len(self.openList) > 0:
-            print(self.openList)
             # Pop the lowest fValue node from open list
             currentNode = self.listPop(self.openList)
             tempCurrent: Node = self.map.setNodeEdges(currentNode)
 
             # If current node is end node, break while loop and print path
             if tempCurrent.nodeId == endNode.nodeId:
-                print("Path found. ")
+                print("----Path found----")
                 self.createPath(tempCurrent, startNode)
-                # print(self.getCostSofar(endNode))
+                print("----Path costs----")
+                print(self.getCostSofar(endNode))
+                print("------------------")
                 break
             
             # Push the current node into close list
@@ -305,11 +306,8 @@ class roleC_AStar():
                     # tentative_gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, x)
                     tempX.parentNode = tempCurrent
                     tempX.gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, tempX)
-                    print("cost so far %s" %self.getCostSofar(tempCurrent))
-                    print("get cost %s" %self.getCost(tempCurrent, tempX))
                     tempX.hValue = self.heuristic(tempX, endNode)
                     tempX.fValue = tempX.gValue + tempX.hValue     
                     self.listPush(tempX, tempX.fValue, self.openList)
-                    # print(self.openList)
 
 
