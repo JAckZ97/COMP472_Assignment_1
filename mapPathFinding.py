@@ -249,7 +249,6 @@ class roleC_AStar():
         costSoFar = 0.0
         current: Node = currentNode
         while current is not None:
-            # print(current.nodeId)
             if current.parentNode is None:
                 break
             else:
@@ -265,7 +264,6 @@ class roleC_AStar():
         x : Node
         for x in self.optPath:
             print(x.nodeId)
-        # return self.optPath
 
     def pathFind(self, startArea: Area, endArea: Area):
         # Define start, current, end node
@@ -279,6 +277,7 @@ class roleC_AStar():
         self.listPush(currentNode, currentNode.fValue, self.openList)
 
         while len(self.openList) > 0:
+            print(self.openList)
             # Pop the lowest fValue node from open list
             currentNode = self.listPop(self.openList)
             tempCurrent: Node = self.map.setNodeEdges(currentNode)
@@ -287,7 +286,7 @@ class roleC_AStar():
             if tempCurrent.nodeId == endNode.nodeId:
                 print("Path found. ")
                 self.createPath(tempCurrent, startNode)
-                print(self.getCostSofar(endNode))
+                # print(self.getCostSofar(endNode))
                 break
             
             # Push the current node into close list
@@ -306,8 +305,11 @@ class roleC_AStar():
                     # tentative_gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, x)
                     tempX.parentNode = tempCurrent
                     tempX.gValue = self.getCostSofar(tempCurrent) + self.getCost(tempCurrent, tempX)
+                    print("cost so far %s" %self.getCostSofar(tempCurrent))
+                    print("get cost %s" %self.getCost(tempCurrent, tempX))
                     tempX.hValue = self.heuristic(tempX, endNode)
                     tempX.fValue = tempX.gValue + tempX.hValue     
                     self.listPush(tempX, tempX.fValue, self.openList)
+                    # print(self.openList)
 
 

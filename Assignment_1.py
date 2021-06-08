@@ -1,5 +1,6 @@
 from mapGenerate import *
 from mapPathFinding import *
+import time
 
 # # Instruction for defining area by cell number
 # print("Define each areas by cells number. Starting with number ")
@@ -52,15 +53,10 @@ playgroundAreaSplit = ['3']
 startNodeSplit = ['1.55', '1.175']
 endNodeSplit = ['1.1', '1.175']
 
-# -------------- map generating --------------
-x = Map(numRow, numColumn, quarantineAreaSplit, vaccineAreaSplit, playgroundAreaSplit, startNodeSplit, endNodeSplit)
-x.drawMap()
-# --------------------------------------------
-
-# def startAndEndPoint(startNodeSplit, endNodeSplit):
-#     # If starting point in quarantine cell (include 4 nodes and 4 edges):
-#     pass
-
+# # -------------- map generating --------------
+# x = Map(numRow, numColumn, quarantineAreaSplit, vaccineAreaSplit, playgroundAreaSplit, startNodeSplit, endNodeSplit)
+# x.drawMap()
+# # --------------------------------------------
 
 def main():
     # Start node x, y coordinate and end node x, y coordinate
@@ -107,10 +103,12 @@ def main():
                     # Get all quarantine area in a list
                     qtAreaList.append(roleC.map.map[x][y])
         
-        for qtArea in qtAreaList:
-            # print(qtArea.topRightNode.nodeId)
-            print("Path %s: " %count)
-            roleC.pathFind(startArea, qtArea)
-            count += 1
+        # for qtArea in qtAreaList:
+        #     print("Path %s: " %count)
+        #     roleC.pathFind(startArea, qtArea)
+        #     count += 1
+        #     time.sleep(5)
+        roleC.pathFind(startArea, qtAreaList[0])
+
 
 main()
