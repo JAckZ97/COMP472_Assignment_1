@@ -137,4 +137,5 @@ dmypy.json
 6_rolev.py
 7_main.py
 8_test.py
-venv
+venv/
+Assignment_1.ipynb
