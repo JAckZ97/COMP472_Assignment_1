@@ -1,7 +1,6 @@
 import numpy as np
 import math
 import heapq
-import time
 
 class Node():
     pass
@@ -288,6 +287,7 @@ class roleC_AStar():
                 print("----Path costs----")
                 print(self.getCostSofar(endNode))
                 print("------------------")
+                # return self.getCostSofar(endNode)
                 break
             
             # Push the current node into close list

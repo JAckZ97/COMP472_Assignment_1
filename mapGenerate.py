@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # -------------- map generating --------------
 class Map():
 
-    def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3'], startNodeSplit = ['1.55', '1.175'], endNodeSplit = ['1.1', '1.175']):
+    def __init__(self, numRow = 2, numColumn = 3, quarantineArea:list = ['1' , '6'] , vaccineArea:list = ['2' , '4'], playgroundArea:list = ['3'], startNodeSplit = None, endNodeSplit = None):
         self.numRow = numRow
         self.numColumn = numColumn
         self.quarantineArea = quarantineArea
@@ -63,11 +63,10 @@ class Map():
         plt.plot(*edge)
         plt.scatter(node_x, node_y, marker='o')
         plt.scatter(area_x, area_y, marker='o')
-        plt.plot(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'ro')
-        plt.text(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'Start node', fontsize=14)
-        plt.plot(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'ro')
-        plt.text(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'End node', fontsize=14)
 
+        if self.startNodeSplit != None and self.endNodeSplit != None:
+            self.StartEndPoint()
+       
         # Label the name for each nodes of the map
         count = 0
         for y in range(self.numRow+1, 0, -1):
@@ -111,4 +110,11 @@ class Map():
                     plt.text(1.1+x*0.2, 1.05+(y-1)*0.1, str(int(temp[-y]) * self.numColumn + (x+1)), fontsize=14)
                 
         plt.show() 
+    
+    def StartEndPoint(self, startNodeSplit = None, endNodeSplit = None):
+        plt.plot(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'ro')
+        plt.text(float(self.startNodeSplit[0]), float(self.startNodeSplit[1]), 'Start node', fontsize=14)
+        plt.plot(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'ro')
+        plt.text(float(self.endNodeSplit[0]), float(self.endNodeSplit[1]), 'End node', fontsize=14)
+
 # --------------------------------------------
